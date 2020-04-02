@@ -1,0 +1,41 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: GATEWAY-SERVICE
+  cloud:
+    gateway:
+      routes:
+        - id: online-service
+          uri: lb://EMARKET-ONLINE
+          predicates:
+            - Path= /emarketProducts/**
+            - Path= /emarketCategories/**
+            - Path= /emarketSubCategories/**
+          filters:
+            - AddResponseHeader=Access-Control-Allow-Origin, *
+        - id: users-service
+          uri: lb://EMARKET-USERS
+          predicates:
+            - Path=/login/**
+            - Path=/user/**
+            - Path=/emarketUsers/**
+            - Path=/emarketRoles/**
+        - id: order-service
+          uri: lb://EMARKET-ORDERS
+          predicates:
+            - Path=/order/**
+        - id: payment-service
+          uri: lb://EMARKET-PAYMENTS
+          predicates:
+            - Path=/payment/**  
+    discovery:
+      enabled: true
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
